@@ -1,0 +1,117 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model User {
+  id       String    @id @default(uuid())
+  number   String    @unique
+  name     String
+  verifed  Boolean   @default(false)
+  bookings Booking[]
+  payments Payment[]
+}
+
+enum AdminType {
+  SuperAdmin
+  Creator
+}
+
+model Admin {
+  id      String    @id @default(uuid())
+  number  String    @unique
+  name    String    @default("")
+  verifed Boolean   @default(false)
+  type    AdminType
+  events  Event[]
+}
+
+model Payment {
+  id      String        @id @default(uuid())
+  userId  String
+  eventId String
+  status  PaymentStatus
+  user    User          @relation(fields: [userId], references: [id])
+  event   Event         @relation(fields: [eventId], references: [id])
+}
+
+model Event {
+  id          String     @id @default(uuid())
+  name        String
+  description String
+  banner      String
+  adminId     String
+  admin       Admin      @relation(fields: [adminId], references: [id])
+  locationId  String
+  location    Location   @relation(fields: [locationId], references: [id])
+  startTime   String
+  seatTypes   SeatType[]
+  bookings    Booking[]
+  payments    Payment[]
+  ended       Boolean    @default(false)
+  published   Boolean    @default(false)
+  processed   Int        @default(0)
+  timeoutInS  Int        @default(600)
+}
+
+model Booking {
+  id                    String        @id @default(uuid())
+  eventId               String
+  userId                String
+  sequenceNumber        Int
+  currentSequenceNumber Int
+  paymentId             String?
+  seats                 Seat[]
+  status                BookingStatus
+  expiry                DateTime
+  user                  User          @relation(fields: [userId], references: [id])
+  event                 Event         @relation(fields: [eventId], references: [id])
+}
+
+model Seat {
+  id         String   @id @default(uuid())
+  seatTypeId String
+  bookingId  String
+  qr         String
+  booking    Booking  @relation(fields: [bookingId], references: [id])
+  seatType   SeatType @relation(fields: [seatTypeId], references: [id])
+}
+
+model SeatType {
+  id          String @id @default(uuid())
+  name        String
+  description String
+  eventId     String
+  price       Int
+  seats       Seat[]
+  capacity    Int
+  filled      Int    @default(0)
+  locked      Int    @default(0)
+  event       Event  @relation(fields: [eventId], references: [id])
+}
+
+model Location {
+  id          String  @id @default(uuid())
+  name        String
+  description String
+  imageUrl    String
+  event       Event[]
+}
+
+enum PaymentStatus {
+  Success
+  Failed
+  Pending
+}
+
+enum BookingStatus {
+  Pending
+  PendingPayment
+  Confirmed
+  Timeout
+  Filled
+}

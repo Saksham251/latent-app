@@ -5,7 +5,7 @@
   "scripts": {
     "build": "tsc",
     "start": "pnpm exec cross-env NODE_ENV=production node dist/index.js",
-    "dev": "pnpm run build && pnpm run start"
+    "dev": "pnpm run build && NODE_ENV=dev node dist/index.js"
   },
   "devDependencies": {
     "@repo/typescript-config": "workspace:*",
@@ -16,11 +16,15 @@
   "license": "ISC",
   "description": "",
   "dependencies": {
+    "@repo/db": "workspace:*",
     "@types/authenticator": "^1.1.4",
     "@types/express": "^5.0.6",
+    "@types/jsonwebtoken": "^9.0.10",
     "authenticator": "^1.1.5",
     "axios": "^1.13.2",
     "dotenv": "^17.2.3",
-    "express": "^5.2.1"
+    "express": "^5.2.1",
+    "jsonwebtoken": "^9.0.3",
+    "twilio": "^5.11.1"
   }
 }
