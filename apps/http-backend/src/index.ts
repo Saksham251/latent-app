@@ -1,4 +1,4 @@
-import express from "express";
+import express, {Request, Response, NextFunction} from "express";
 import dotenv from "dotenv"
 import v1Router from "./routes/v1/index";
 

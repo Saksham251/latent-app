@@ -25,7 +25,7 @@ model Admin {
   id      String    @id @default(uuid())
   number  String    @unique
   name    String    @default("")
-  verifed Boolean   @default(false)
+  verified Boolean   @default(false)
   type    AdminType
   events  Event[]
 }

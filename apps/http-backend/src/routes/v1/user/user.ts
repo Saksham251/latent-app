@@ -1,9 +1,9 @@
 import { Router, type Router as ExpressRouter } from "express";
-import {verifyToken,getToken} from "../../utils/totp";
+import {verifyToken,getToken} from "../../../utils/totp";
 import {prisma} from "@repo/db";
 import jwt from "jsonwebtoken";
-import { JWT_PASSWORD } from "./config";
-import { sendMessage } from "../../utils/twilio";
+import { JWT_PASSWORD } from "../../../config";
+import { sendMessage } from "../../../utils/twilio";
 
 const router:ExpressRouter = Router();
 
@@ -43,7 +43,7 @@ router.post("/signup",async (req,res)=>{
 
 
 router.post("/signup/verify",async (req,res)=>{
-    const number = req.body.phoneNumber;
+    const number = req.body.number;
     const name = req.body.name;
     const otp = req.body.otp;
     if(process.env.NODE_ENV==="production" && !verifyToken(number,"AUTH",otp)){
