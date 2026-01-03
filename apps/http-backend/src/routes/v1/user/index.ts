@@ -88,7 +88,11 @@ router.post("/signin",async (req,res)=>{
             console.log("inside send message")
             // send otp to user
             try {
-                await sendMessage(`Your otp for logging into latent is ${totp}`, number)
+                await sendMessage(`Your otp for logging into latent is ${totp}`, number);
+                res.status(200).json({
+                    "message":"Success"
+                });
+                return;
             } catch(e) {
                 res.status(500).json({
                     message: "Could not send otp"

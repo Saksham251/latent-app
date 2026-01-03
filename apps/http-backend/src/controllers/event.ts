@@ -11,6 +11,9 @@ export async function getEvent(
         id: eventId,
         adminId: adminId,
       },
+      include:{
+        seatTypes:true
+      }
     });
   }
 
@@ -18,5 +21,8 @@ export async function getEvent(
     where: {
       id: eventId,
     },
+    include:{
+      seatTypes:true
+    }
   });
 }

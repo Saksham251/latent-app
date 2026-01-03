@@ -1,13 +1,18 @@
 import { Router, type Router as ExpressRouter } from "express";
-import userRouter from "./user/user";
+import userRouter from "./user";
 import adminEventRouter from "./admin/event";
 import adminRouter from "./admin/index";
 import adminLocationRouter from "./admin/location";
+import bookingsRouter from "./user/bookings";
+import transactionRouter from "./user/transaction";
+
 import testRouter from "./test/index";
 
 const router:ExpressRouter = Router();
 
 
+router.use("/user/transaction",transactionRouter);
+router.use("/user/bookings",bookingsRouter);
 router.use("/user",userRouter);
 router.use("/admin/event",adminEventRouter);
 router.use("/admin/location",adminLocationRouter);

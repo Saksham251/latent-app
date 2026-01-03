@@ -2,11 +2,9 @@ import { Router } from "express";
 import { prisma } from "@repo/db"; 
 import { adminMiddleware } from "../../../middleware/admin";
 import { CreateLocationSchema} from "@repo/common";
-import { superAdminMiddleware } from "../../../middleware/superadmin";
-
 const router: Router = Router();
 
-router.post("/", superAdminMiddleware, async (req, res) => {
+router.post("/", adminMiddleware, async (req, res) => {
     const {data, success} = CreateLocationSchema.safeParse(req.body);
 
     if (!success) {

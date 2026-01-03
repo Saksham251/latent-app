@@ -30,3 +30,13 @@ export const UpdateEventSchema = z.object({
     published: z.boolean(),
     ended: z.boolean(),
 });
+
+export const UpdateSeatSchema = z.object({
+    seats:z.array(z.object({
+        id:z.string().optional(),
+        name:z.string(),
+        description:z.string(),
+        price: z.string().transform(Number),
+        capacity: z.string().transform(Number),
+    }))
+});

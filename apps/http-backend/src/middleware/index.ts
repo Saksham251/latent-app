@@ -26,6 +26,7 @@ export function verifyToken(req:Request,res:Response,secret:string):boolean{
         if(typeof decoded ==='string'){
             return false;
         }
+        req.userId = decoded.userId;
     }
     catch(error){
         return false;
