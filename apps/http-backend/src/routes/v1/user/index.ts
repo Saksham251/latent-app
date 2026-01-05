@@ -4,12 +4,19 @@ import {prisma} from "@repo/db";
 import jwt from "jsonwebtoken";
 import { JWT_PASSWORD } from "../../../config";
 import { sendMessage } from "../../../utils/twilio";
-
+import { SignInSchema,SignInVerifySchema,UserSignUpSchema,UserSignUpVerifiySchema } from "@repo/common";
 const router:ExpressRouter = Router();
 
 
 
 router.post("/signup",async (req,res)=>{
+    const parsedData = UserSignUpSchema.safeParse(req.body);
+    if(!parsedData.success){
+        res.status(400).json({
+            message: "Invalid number"
+        })
+        return;
+    }
     const number = req.body.number;
     const totp = getToken(number, "AUTH");
 
@@ -43,9 +50,16 @@ router.post("/signup",async (req,res)=>{
 
 
 router.post("/signup/verify",async (req,res)=>{
-    const number = req.body.number;
-    const name = req.body.name;
-    const otp = req.body.otp;
+    const parsedData = UserSignUpVerifiySchema.safeParse(req.body);
+    if (!parsedData.success) {
+        res.status(400).json({
+            message: "Invalid data"
+        })
+        return
+    }
+    const number = parsedData.data.number;
+    const name = parsedData.data.name;
+    const otp = parsedData.data.totp;
     if(process.env.NODE_ENV==="production" && !verifyToken(number,"AUTH",otp)){
         res.status(403).json({
             "message":"Invalid Token"
@@ -72,7 +86,14 @@ router.post("/signup/verify",async (req,res)=>{
 
 
 router.post("/signin",async (req,res)=>{
-    const number = req.body.number;
+    const parsedData = SignInSchema.safeParse(req.body);
+    if (!parsedData.success) {
+        res.status(400).json({
+            message: "Invalid data"
+        })
+        return
+    }
+    const number = parsedData.data.number;
     let totp = getToken(number,"AUTH");
     
     try{
@@ -110,7 +131,14 @@ router.post("/signin",async (req,res)=>{
 
 
 router.post("/signin/verify",async (req,res)=>{
-    const number = req.body.number;
+    const parsedData = SignInVerifySchema.safeParse(req.body);
+    if (!parsedData.success) {
+        res.status(400).json({
+            message: "Invalid data"
+        })
+        return
+    }
+    const number = parsedData.data.number;
     if(process.env.NODE_ENV === "production" && !verifyToken(number,"AUTH",req.body.otp)){
         res.status(403).json({
             "message":"Invalid Token"

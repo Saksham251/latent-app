@@ -1,0 +1,12 @@
+{
+    "extends":"@repo/typescript-config/base.json",
+    "compilerOptions": {
+        // File Layout
+        "rootDir": "./src",
+        "outDir": "./dist",
+        "declaration": true
+    },
+    "include": [
+        "src"
+    ]
+}

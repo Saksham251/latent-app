@@ -34,7 +34,7 @@ router.post("/", adminMiddleware, async (req, res) => {
 
 });
 
-router.get("/locations", adminMiddleware, async (req, res) => {
+router.get("/", adminMiddleware, async (req, res) => {
     const locations = await prisma.location.findMany();
 
     res.json({

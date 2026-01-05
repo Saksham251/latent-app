@@ -10,7 +10,7 @@ export async function createAdmin(number:string,name:string,type:AdminType):Prom
         type}
     });
     const token = jwt.sign({
-        adminId:admin.id
+        userId:admin.id
     },ADMIN_JWT_PASSWORD);
     return token;
 }

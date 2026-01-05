@@ -30,7 +30,7 @@ router.post("/", adminMiddleware, async (req, res) => {
             data: {
                 name: data.name,
                 description: data.description,
-                startTime: data.startTime,
+                startTime: new Date(data.startTime).toISOString(),
                 locationId: data.location,
                 banner: data.banner,
                 adminId,
@@ -119,6 +119,9 @@ router.get("/", adminMiddleware, async (req, res) => {
     const events = await prisma.event.findMany({
         where: {
             adminId: req.userId
+        },
+        include:{
+            seatTypes:true
         }
     });
 

@@ -2,14 +2,14 @@
 import { Router } from "express";
 import { prisma} from "@repo/db";
 import jwt from "jsonwebtoken";
-import { ADMIN_JWT_PASSWORD } from "../../../config";
+import { SUPERADMIN_JWT_PASSWORD } from "../../../config";
 import { sendMessage } from "../../../utils/twilio";
 import { getToken, verifyToken } from "../../../utils/totp";
 import { SignInSchema,SignInVerifySchema } from "@repo/common";
 const router: Router = Router();
 
 router.post("/signin", async (req, res) => {
-    const parsedData = SignInVerifySchema.safeParse(req.body);
+    const parsedData = SignInSchema.safeParse(req.body);
     if(!parsedData.success){
         res.json({
             message: "Invalid token"
@@ -51,14 +51,14 @@ router.post("/signin", async (req, res) => {
 
 router.post("/signin/verify", async (req, res) => {
     const parsedData = SignInVerifySchema.safeParse(req.body);
-    if (!parsedData.success) {
-        res.status(400).json({
-            message: "Invalid data"
-        })
-        return
+    if(!parsedData.success){
+        res.json({
+            message: "Invalid token"
+        });
+        return;
     }
     const number = parsedData.data.number;    
-    const otp = parsedData.data.totp;
+    const otp = req.body.totp;
 
     if (process.env.NODE_ENV === "production" && !verifyToken(number, "ADMIN_AUTH", otp)) {
         res.json({
@@ -75,7 +75,7 @@ router.post("/signin/verify", async (req, res) => {
 
     const token = jwt.sign({
         userId: user.id
-    }, ADMIN_JWT_PASSWORD)
+    },SUPERADMIN_JWT_PASSWORD)
 
     res.json({
         token

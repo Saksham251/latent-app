@@ -48,13 +48,13 @@ model Event {
   admin       Admin      @relation(fields: [adminId], references: [id])
   locationId  String
   location    Location   @relation(fields: [locationId], references: [id])
-  startTime   String
+  startTime   DateTime
+  processed   Int       @default(0)
   seatTypes   SeatType[]
   bookings    Booking[]
   payments    Payment[]
   ended       Boolean    @default(false)
   published   Boolean    @default(false)
-  processed   Int        @default(0)
   timeoutInS  Int        @default(600)
 }
 
@@ -63,11 +63,11 @@ model Booking {
   eventId               String
   userId                String
   sequenceNumber        Int
-  currentSequenceNumber Int
   paymentId             String?
   seats                 Seat[]
   status                BookingStatus
   expiry                DateTime
+  currentSequenceNumber Int
   user                  User          @relation(fields: [userId], references: [id])
   event                 Event         @relation(fields: [eventId], references: [id])
 }
