@@ -1,6 +1,6 @@
 import {prisma} from "@repo/db";
 
-async function  main() {
+async function main() {
     const pendingEvents = await prisma.event.findMany({
         where:{
             published:true,
@@ -138,6 +138,10 @@ async function allowNewBookings(event:{id:string,processed:number}) {
             continue;
         }
         allowedUpdatedBookings.push(booking);
+        for (const [seatTypeId, count] of userMap.entries()) {
+            const seatInfo = seatsMap.get(seatTypeId)!;
+            seatInfo.currentlyAvailable -= count; // lock effect
+        }
     }
     if(allowedUpdatedBookings.length===0 && bookingsToMarkAsFilled.length===0){
         return;
@@ -164,7 +168,24 @@ async function allowNewBookings(event:{id:string,processed:number}) {
                 status:"Filled"
             }
         }),
-        
+        ...allowedUpdatedBookings.flatMap((booking:any)=>{
+            const userMap = new Map<string,number>();
+
+            booking.seats.forEach((seat:any)=>{
+                userMap.set(seat.seatTypeId,(userMap.get(seat.seatTypeId)??0)+1);
+            });
+
+            return Array.from(userMap.entries()).map(
+                ([seatTypeId, count]) => prisma.seatType.update({
+                    where:{
+                        id:seatTypeId
+                    },
+                    data:{
+                        locked: { increment: count }
+                    }
+                })
+            );
+        }),
         prisma.event.update({
             where:{
                 id:event.id
